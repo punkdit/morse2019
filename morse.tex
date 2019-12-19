@@ -166,7 +166,7 @@ every cell is critical.
 
 \subsection{Example Morse flows}
 
-Below we show some random Morse flows with minimal number of 
+Below we show some ``random'' Morse flows with minimal number of 
 critical cells.
 The critical cells are denoted by open circles.
 Critical 0-cells are called {\it minima}, critical
@@ -182,6 +182,26 @@ is coloured blue. These are extended backwards by lengthening
 the tail.
 Hopefully the pictures below make all this clear.
 
+Given a CSS stabilizer code,
+the parameters $n,m_X,m_Z,k$ denote the number
+of qubits, $X$-type stabilizers, $Z$-type stabilizers, and
+logical qubits respectively.
+In the examples below, qubits are on the edges 
+so $n$ also counts those. 
+Also, $m_X$ counts the number of green 
+arrows, $m_Z$ counts the number of blue arrows,
+and $k$ counts the number of saddles.
+Minima correspond to ``missing'' $X$-type stabilizers,
+and maxima to ``missing'' $Z$-type stabilizers.
+
+We also see that the blue arrows form a spanning forrest
+on the graph given by the $1$- and $2$-cells,
+and the green arrows form a spanning
+forrest on the graph given by the $0$- and $1$-cells.
+These two forrests are disjoint on the $1$-cells.
+
+\todo{more details...}
+
 \subsubsection{Example}
 
 A surface code with everywhere smooth boundary,
@@ -191,6 +211,7 @@ with parameters $n=40, m_X=24, m_Z=16, k=0.$
 \includegraphics[]{pic-disc.pdf}
 \end{center}
 
+The blue arrows on the smooth boundary point ``inwards''.
 
 \subsubsection{Example}
 
@@ -200,6 +221,9 @@ with parameters $n=32, m_X=15, m_Z=16, k=1.$
 \begin{center}
 \includegraphics[]{pic-surface.pdf}
 \end{center}
+
+The green arrows point ``outwards'' on the rough boundary,
+and the blue arrows on the smooth boundary point ``inwards''.
 
 
 \subsubsection{Example}
@@ -211,7 +235,9 @@ with parameters $n=32, m_X=15, m_Z=15, k=2.$
 \includegraphics[]{pic-torus.pdf}
 \end{center}
 
-
+The diagram is periodic, vertically and horizontally.
+The blue forrest has one component, and the
+green forrest also has one component.
 
 
 
