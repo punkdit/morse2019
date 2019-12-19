@@ -106,8 +106,9 @@
 
 
 
-\title{Morse theoretic stabilizer codes}
+\title{Higher structures for quantum codes}
 
+\author{Simon Burton}
 
 \date{\today}
 
@@ -118,7 +119,102 @@
 \maketitle
 
 
-Hi ho
+\section{Introduction}
+
+The toric code: \cite{Dennis2002}
+Surface code, with punctures, and braiding thereof, \cite{Fowler2012}.
+Moving holes around is not unitary: accomplished by turning stabilizers on
+and off.
+
+Comprehensive discussion of surface codes with boundaries, and
+associated logical operators: \cite{Delfosse2016}.
+
+The 0-dimensional boundary between 1-dimensional
+boundary types is a twist defect:
+\cite{Brown2017}.
+Once again, code deformation is done via projective
+measurements.
+
+References for discrete Morse theory: \cite{Forman1998,Forman2002,Ghrist2014}
+
+
+\section{Morse theory}
+
+A {\it cellulation} is defined to be a {\it finite graded poset}.
+This is a finite set $\Gamma$
+with a grade function $\text{dim}:\Gamma\to\mathbb{N}$
+such that $\text{dim}(c)=\text{dim}(d)+1$
+whenever $e\in\Gamma$ with $c\ge e\ge d$ then $e=c \ \text{or}\  e=d.$
+We write $c^i \in\Gamma$ to mean that $c\in\Gamma$ and $\text{dim}(c)=i.$
+We also call $c^i$ an $i$-cell.
+
+\todo{boundary map...}
+
+Given a cellulation $\Gamma$, a {\it Morse flow} $V$ is
+a set of pairs $(c^i, c^{i+1}) \in \Gamma\times\Gamma$
+that satisfy the following:
+
+(1) every $c\in\Gamma$ appears at most once in V (in either the first or
+second item of a pair.)
+
+(2) no loops ... \todo{todo}
+
+An $i$-cell not found in any pair in $V$ is called a 
+{\it critical} cell of $V.$
+Note that $V$ may be the empty set, in which case
+every cell is critical.
+
+\subsection{Example Morse flows}
+
+Below we show some random Morse flows with minimal number of 
+critical cells.
+The critical cells are denoted by open circles.
+Critical 0-cells are called {\it minima}, critical
+1-cells are {\it saddles}, and critical 2-cells are {\it maxima.}
+
+We modify the usual discrete Morse theory picture as follows.
+A flow line from a 0-cell to a 1-cell (vertex to edge)
+is coloured green. These are extended along the edge in the
+direction of the arrow. There may or may not be a vertex at the other
+end of the arrow.
+A flow line from a 1-cell to a 2-cell (edge to face)
+is coloured blue. These are extended backwards by lengthening
+the tail.
+Hopefully the pictures below make all this clear.
+
+\subsubsection{Example}
+
+A surface code with everywhere smooth boundary,
+with parameters $n=40, m_X=24, m_Z=16, k=0.$
+
+\begin{center}
+\includegraphics[]{pic-disc.pdf}
+\end{center}
+
+
+\subsubsection{Example}
+
+A surface code with rough \& smooth boundary,
+with parameters $n=32, m_X=15, m_Z=16, k=1.$
+
+\begin{center}
+\includegraphics[]{pic-surface.pdf}
+\end{center}
+
+
+\subsubsection{Example}
+
+A toric code,
+with parameters $n=32, m_X=15, m_Z=15, k=2.$
+
+\begin{center}
+\includegraphics[]{pic-torus.pdf}
+\end{center}
+
+
+
+
+
 
 
 \bibliography{refs}{}
