@@ -1,0 +1,135 @@
+
+\documentclass[11pt,oneside]{article} 
+
+\usepackage{a4wide}
+
+\usepackage{amsmath}
+\usepackage{color}
+%\usepackage{natbib} % kills arxiv 
+\usepackage{framed}
+%\usepackage{cite}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+%\RequirePackage{algorithmic}
+%\RequirePackage{algorithm}
+%\RequirePackage{theorem}
+%\RequirePackage{eucal}
+\RequirePackage{color}
+\RequirePackage{url}
+\RequirePackage{mdwlist}
+
+\RequirePackage{rotating}
+
+
+\RequirePackage[all]{xy}
+%\_CompileMatrices
+%\RequirePackage{hyperref}
+\RequirePackage{graphicx}
+%\RequirePackage[dvips]{geometry}
+
+\usepackage{xcolor}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage[caption=false]{subfig}
+\usepackage{enumerate}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+
+% -------------- _Commands ----------------------
+
+\makeatletter
+\newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
+\makeatother
+
+\newcommand{\Eref}[1]{(\ref{#1})}
+\newcommand{\Fref}[1]{Fig.~\ref{#1}}
+%\newcommand{\Aref}[1]{Appendix~\ref{#1}}
+\newcommand{\SRef}[1]{Section~\ref{#1}}
+
+\newcommand{\todo}[1]{\ \textcolor{red}{\{#1\}}\ }
+
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\Stab}{\mathrm{Stab}}
+\newcommand{\Fix}{\mathrm{Fix}}
+\newcommand{\Orbit}{\mathrm{Orbit}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Image}{\mathrm{Im}}
+\newcommand{\Dim}{\mathrm{Dim}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\Det}{\mathrm{Det}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Integer}{\mathbb{Z}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\Field}{\mathbb{F}}
+\newcommand{\Code}{\mathcal{C}}
+\newcommand{\End}{\mbox{End}}
+\newcommand{\Inv}{\mbox{Inv}}
+\newcommand{\Span}{\mbox{Span}}
+\newcommand{\Hilb}{\mathcal{H}}
+\newcommand{\Rey}{\mathcal{R}}
+\newcommand{\tensor}{\otimes}
+
+% Lemma, proof, theorem, etc.
+\newcommand\nounderline[1]{ #1} 
+\newcommand\dolemma[1]{\vskip 5pt \noindent{\bf \underline{Lemma #1.}\ }}
+\newcommand\doproposition[1]{\vskip 5pt \noindent {\bf \underline{Proposition #1.}\ }}
+\newcommand\dotheorem[1]{\vskip 5pt \noindent {\bf \underline{Theorem #1.}\ }}
+\newcommand\docorollary[1]{\vskip 5pt \noindent {\bf \underline{Corollary #1.}\ }}
+\newcommand\doexample[1]{\vskip 5pt \noindent {\bf \underline{Example #1.}\ }}
+\newcommand\doproof{\vskip 5pt \noindent{\bf \nounderline{Proof:}\ }}
+
+\newcommand\tombstone{\rule{.36em}{2ex}\vskip 5pt}
+
+\newcounter{numitem}
+\newcommand{\numitem}[1]{\refstepcounter{numitem}\thenumitem\label{#1}}
+
+% braket notation...
+\newcommand{\ket}[1]{|{#1}\rangle}
+\newcommand{\expect}[1]{\langle{#1}\rangle}
+\newcommand{\bra}[1]{\langle{#1}|}
+\newcommand{\ketbra}[2]{\ket{#1}\!\bra{#2}}
+\newcommand{\braket}[2]{\langle{#1}|{#2}\rangle}
+
+% Categories
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\FinSet}{\mathbf{FinSet}}
+\newcommand{\GSet}{\mathbf{GSet}}
+\newcommand{\GRep}{\mathbf{GRep}}
+
+\newcommand{\thinplus}{\!+\!}
+
+\renewcommand{\arraystretch}{1.2}
+
+
+
+\title{Algebraic Morse theory for quantum codes}
+
+\author{Simon Burton}
+
+\date{\today}
+
+\flushbottom
+
+\begin{document}
+
+\maketitle
+
+We review algebraic Morse theory, see \cite{Jollenbeck2005}, chapter 3.
+
+
+
+
+
+\bibliography{refs}{}
+\bibliographystyle{abbrv}
+
+
+
+\end{document}
+
+
+
