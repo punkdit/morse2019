@@ -10,6 +10,7 @@
 %\usepackage{cite}
 \usepackage{tikz}
 \usepackage{tikz-cd}
+%\usepackage{mathtools}
 
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
@@ -101,6 +102,7 @@
 \newcommand{\GRep}{\mathbf{GRep}}
 
 \newcommand{\thinplus}{\!+\!}
+\newcommand{\MM}{\mathcal{M}}
 
 \renewcommand{\arraystretch}{1.2}
 
@@ -121,7 +123,28 @@
 We review algebraic Morse theory 
 \cite{Jollenbeck2005,Kozlov2005,Skoldberg2006}.
 
+Consider a chain complex $C$ over a field $K$:
+$$
+    C_N \xrightarrow{\partial_N} C_{N-1}
+    \to ...
+    \to C_1 \xrightarrow{\partial_1} C_0.
+$$
+Pick a basis $X_i$ for each $C_i$
+and let $X=\sqcup X_i$.
+Define a (directed) graph $\Gamma_C$
+with vertex set $X$ and
+weighted edge $u\xrightarrow{w}v$
+for every $u\in X_i, v\in X_{i-1}$
+where $w = (\partial_i)_{v,u} \ne 0.$
 
+A {\it matching} $\MM$ is any collection of
+edges from $\Gamma_C$ such that 
+any two distinct edges in $\MM$ do not share a vertex.
+Let $\Gamma_C^\MM$ be the graph obtained from
+$\Gamma_C$ by replacing every edge $u\xrightarrow{w} v\in \MM$
+with $v\xrightarrow{-1/w} u.$
+A matching $\MM$ is {\it Morse} when
+$\Gamma_C^\MM$ contains no (directed) cycles.
 
 
 
