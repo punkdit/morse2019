@@ -122,7 +122,6 @@
 
 We review algebraic Morse theory 
 \cite{Jollenbeck2005,Kozlov2005,Skoldberg2006}.
-
 Consider a chain complex $C$ over a field $K$:
 $$
     C_N \xrightarrow{\partial_N} C_{N-1}
@@ -131,7 +130,7 @@ $$
 $$
 Pick a basis $X_i$ for each $C_i$
 and let $X=\sqcup X_i$.
-Define a (directed) graph $\Gamma_C$
+Define a weighted directed graph $\Gamma_C$
 with vertex set $X$ and
 weighted edge $u\xrightarrow{w}v$
 for every $u\in X_i, v\in X_{i-1}$
@@ -145,6 +144,37 @@ $\Gamma_C$ by replacing every edge $u\xrightarrow{w} v\in \MM$
 with $v\xrightarrow{-1/w} u.$
 A matching $\MM$ is {\it Morse} when
 $\Gamma_C^\MM$ contains no (directed) cycles.
+
+Fix a Morse matching $\MM.$
+Let $X_i^\MM$ be the set of elements of $X_i$ not found in
+any edge of $\MM.$
+These elements are called {\it critical.}
+Let the vector space $C_i^\MM$ be generated from the basis $X_i^\MM.$
+We define a new chain complex, the {\it Morse complex},
+as follows:
+\begin{align*}
+\partial_i^\MM : C_i^\MM &\to C_{i-1}^\MM \\
+    c \in X_i^\MM &\mapsto \sum_{c'\in X_{i-1}^\MM} \Gamma(c, c') c'.
+\end{align*}
+Here $\Gamma(c,c')$ is the sum over the weights of all 
+paths in $\Gamma_C^\MM$ from $c$ to $c'$.
+Any path in $\Gamma_C^\MM$ 
+$$
+c_1 \xrightarrow{w_1} c_2 \xrightarrow{w_2} ...  \xrightarrow{w_r} c_r
+$$
+has weight
+$$
+w(c_1 \xrightarrow{w_1} c_2 \xrightarrow{w_2} ...  \xrightarrow{w_r} c_r)
+= \prod_{i=1}^r w_i.
+$$
+
+\dolemma{\numitem{Lem}} 
+The maps $\{ \partial_i^\MM \}_{i=0}^N$ define a chain complex.
+\doproof 
+See \cite{Jollenbeck2005} Lemma 2.1.
+\tombstone
+
+
 
 
 
