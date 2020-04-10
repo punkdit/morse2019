@@ -120,6 +120,24 @@
 
 \maketitle
 
+\section{Introduction}
+
+As application of these techniques, we suggest/conjecture the following connections:
+\begin{enumerate}
+\item[(i)]
+Alternate description of logical operators in
+generalized surface codes \cite{Delfosse2016}.
+\item[(ii)]
+Use to derive the unitary encoding circuits in \cite{Higgott2020}.
+\item[(iii)]
+Explain the appearence of ZX-calculus in \cite{deBeaudrap2020}.
+\item[(iv)]
+Gaussian elimination and finite geometries \cite{Rengaswamy2018}.
+\end{enumerate}
+
+
+\section{Algebraic Morse theory}
+
 We review algebraic Morse theory 
 \cite{Jollenbeck2005,Kozlov2005,Skoldberg2006}.
 Consider a chain complex $C$ over a field $K$:
@@ -152,10 +170,16 @@ These elements are called {\it critical.}
 Let the vector space $C_i^\MM$ be generated from the basis $X_i^\MM.$
 We define a new chain complex, the {\it Morse complex},
 as follows:
-\begin{align*}
-\partial_i^\MM : C_i^\MM &\to C_{i-1}^\MM \\
-    c \in X_i^\MM &\mapsto \sum_{c'\in X_{i-1}^\MM} \Gamma(c, c') c'.
-\end{align*}
+%\begin{align*}
+%\partial_i^\MM : C_i^\MM &\to C_{i-1}^\MM \\
+%    c \in X_i^\MM &\mapsto \sum_{c'\in X_{i-1}^\MM} \Gamma(c, c') c'.
+%\end{align*}
+$$
+\begin{array}{lll}
+\partial_i^\MM : &C_i^\MM &\to\ \  C_{i-1}^\MM \\
+    & c \in X_i^\MM &\mapsto \displaystyle\sum_{c'\in X_{i-1}^\MM} \Gamma(c, c') c'.
+\end{array}
+$$
 Here $\Gamma(c,c')$ is the sum over the weights of all 
 paths in $\Gamma_C^\MM$ from $c$ to $c'$.
 Any path in $\Gamma_C^\MM$ 
@@ -169,9 +193,54 @@ w(c_1 \xrightarrow{w_1} c_2 \xrightarrow{w_2} ...  \xrightarrow{w_r} c_r)
 $$
 
 \dolemma{\numitem{Lem}} 
-The maps $\{ \partial_i^\MM \}_{i=0}^N$ define a chain complex.
+%The maps $\{ \partial_i^\MM \}_{i=0}^N$ define a chain complex.
+The maps $\partial_\star^\MM$ define a chain complex.
 \doproof 
 See \cite{Jollenbeck2005} Lemma 2.1.
+\tombstone
+
+%Define chain maps $f:C_\star\to C_\star^\MM$ and $g:C_\star^\MM\to C_\star$ as
+Now define the following linear maps:
+$$
+\begin{array}{lll}
+f_i : &C_i &\to\ \  C_i^\MM \\
+    & c \in X_i &\mapsto \displaystyle\sum_{c'\in X_i^\MM} \Gamma(c, c') c',\\
+g_i : &C_i^\MM &\to\ \  C_i \\
+    & c \in X_i^\MM &\mapsto \displaystyle\sum_{c'\in X_i} \Gamma(c, c') c'. \\
+\chi_i : &C_i &\to\ \  C_{i+1} \\
+    & c \in X_i &\mapsto \displaystyle\sum_{c'\in X_{i+1}} \Gamma(c, c') c'.
+\end{array}
+$$
+
+\dolemma{\numitem{Lem}}
+$f_\star:C_\star\to C_\star^\MM$ and $g_\star:C_\star^\MM\to C_\star$ 
+are chain maps, ie.
+\begin{align*}
+    \partial^\MM\circ f &= f\circ \partial \\
+    \partial\circ g &= g\circ \partial^\MM.
+\end{align*}
+\doproof See \cite{Jollenbeck2005} Lemma 2.2.
+\tombstone
+
+\dolemma{\numitem{Lem}}
+The maps $f_\star$ and $g_\star$ define a homotopy
+equivalence between $C$ and $C^\MM$ with
+chain homotopies $\chi:g\circ f\to I_C$ and $0:f\circ g\to I_{C^\MM}$.
+This means we have
+\begin{align*}
+    g_i \circ f_i - I_C &= \partial_{i+1} \chi_i + \chi_{i-1}\partial_i,\\
+    f_i \circ g_i - I_{C^\MM} &= 0.
+\end{align*}
+\doproof See \cite{Jollenbeck2005} Lemma 2.3.
+\tombstone
+
+\dotheorem{\numitem{Lem}}
+The homologies for $C$ and $C^\MM$ are isomorphic:
+$$
+    H_\star(C) \cong H_\star(C^\MM).
+$$
+\doproof
+Immediate consequence of the above lemmas.
 \tombstone
 
 
