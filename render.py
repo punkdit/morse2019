@@ -124,8 +124,10 @@ def annotate(x, y, r, label):
     epsilon = 0.1*r
     #debug = print if label=="$v_{2}$" else lambda *args,**kw:None
     #debug(label)
-    for (dx, dy) in [
-        ( 1,  0), (-1,  0), ( 0,  1), ( 0, -1)]:
+    #for (dx, dy) in [
+    #    ( 1,  0), (-1,  0), ( 0,  1), ( 0, -1)]:
+    for dx in [-1, 0, 1]:
+      for dy in [-1, 0, 1]:
         x1 = x+r*dx
         y1 = y+r*dy
         #hits = hitlist(x1-r, y1-r, x1+r, y1+r)
@@ -281,22 +283,26 @@ def draw_complex(chain, flow, scale):
 
     # Draw Edges
     matches = flow.get_pairs(0)
-    for e in edges:
-        bdy = bdys[e]
+    for cell in edges:
+        bdy = bdys[cell]
         v0, v1 = bdy
-        if (v1, e) in matches:
+        if (v1, cell) in matches:
             v0, v1 = v1, v0 # swap
         x0, y0 = v0.pos
         x1, y1 = v1.pos
-        x2, y2 = e.pos
+        x2, y2 = cell.pos
 
-        if (v0, e) in matches:
+        if (v0, cell) in matches:
             arrow(x0, y0, x2, y2, 1.0, st_THick+[orange])
 
-        elif e in critical:
+        elif cell in critical:
             cvs.stroke(path.circle(x2, y2, r), [red]+st_thick)
 
         cvs.stroke(path.line(x0, y0, x1, y1))
+
+        name = "$%s$"%cell.name
+        annotate(x2, y2, 5*r, name)
+
 
     # Draw Vertices
     for cell in verts:
