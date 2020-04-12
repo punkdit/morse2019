@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-
-import sys, os
-from math import *
-from random import *
-
-seed(0)
+#from math import sin, cos, pi
+from random import seed, random, shuffle
+seed(0) # <----------- seed ------------
 
 from pyx import canvas, path, deco, trafo, style, text, color, deformer
 from pyx.color import rgb
@@ -90,7 +87,8 @@ def pop(*args):
 # ----------------------------------------------------------------
 
 import numpy
-from bruhat.morse import Assembly, Chain, Flow
+#numpy.random.seed(0)
+from bruhat.morse import Assembly, Chain, Flow, Field
 from bruhat import element
 from bruhat.solve import parse
 
@@ -124,10 +122,10 @@ def annotate(x, y, r, label):
     epsilon = 0.1*r
     #debug = print if label=="$v_{2}$" else lambda *args,**kw:None
     #debug(label)
-    #for (dx, dy) in [
-    #    ( 1,  0), (-1,  0), ( 0,  1), ( 0, -1)]:
-    for dx in [-1, 0, 1]:
-      for dy in [-1, 0, 1]:
+    for (dx, dy) in [
+        ( 1,  0), (-1,  0), ( 0,  1), ( 0, -1)]:
+    #for dx in [-1, 0, 1]:
+    #  for dy in [-1, 0, 1]:
         x1 = x+r*dx
         y1 = y+r*dy
         #hits = hitlist(x1-r, y1-r, x1+r, y1+r)
@@ -208,7 +206,7 @@ def draw_poset(chain, flow, dx=1.0, dy=2.0, r=0.06):
             cvs.text(x+3*r, y-r, name, northwest)
 
 
-def draw_complex(chain, flow, scale):
+def draw_complex(chain, flow, scale, labels=True):
 
     r = 0.07
 
@@ -251,19 +249,32 @@ def draw_complex(chain, flow, scale):
         bdy = bdys[f]
         assert bdy
 
-        hull = []
+        # find all extremal vertices of this Face
+        allpos = []
         for e in bdy:
-            hull += bdys[e]
-        hull = list(set(hull)) # uniq
+            vs = bdys[e]
+            allpos += [v.pos for v in vs]
+            if len(vs)==1: # half an edge (only one vertex)
+                assert e.pos is not None
+                allpos.append(e.pos)
+        allpos = list(set(allpos)) # uniq
 
-        x0 = sum([v.pos[0] for v in hull]) / len(hull)
-        y0 = sum([v.pos[1] for v in hull]) / len(hull)
+        # now order these points for drawing
+        hull = [allpos[0]]
+        while len(hull) < len(allpos):
+            vs = [pos for pos in allpos if pos not in hull]
+            x0, y0 = hull[-1]
+            vs.sort(key = lambda pos : abs(pos[0]-x0)+abs(pos[1]-y0))
+            hull.append(vs[0])
+
+        # center
+        x0 = sum([pos[0] for pos in hull]) / len(hull)
+        y0 = sum([pos[1] for pos in hull]) / len(hull)
 
         if f.pos == None:
             f.pos = x0, y0
 
         if not f.infty:
-            hull = [v.pos for v in hull]
             hull = [conv(x, y, x0, y0, 0.2) for (x,y) in hull]
             #p = path.path(path.moveto(*hull[0]),
             #cvs.fill(p, [grey])
@@ -276,7 +287,10 @@ def draw_complex(chain, flow, scale):
                     x0 = 2*x1
                     y0 = 2*y1
                     f.pos = x0, y0
-                arrow(x1, y1, x0, y0, 1.0, st_THick+[orange])
+                try:
+                    arrow(x1, y1, x0, y0, 1.0, st_THick+[orange])
+                except:
+                    cvs.text(x0, y0, "???", center)
 
         if f in critical:
             cvs.stroke(path.circle(f.pos[0], f.pos[1], r), [red]+st_thick)
@@ -285,11 +299,16 @@ def draw_complex(chain, flow, scale):
     matches = flow.get_pairs(0)
     for cell in edges:
         bdy = bdys[cell]
-        v0, v1 = bdy
-        if (v1, cell) in matches:
-            v0, v1 = v1, v0 # swap
+        assert len(bdy) in [1, 2]
+        v0 = bdy[0]
+        if len(bdy)==2:
+            v1 = bdy[1]
+            if (v1, cell) in matches:
+                v0, v1 = v1, v0 # swap
+            x1, y1 = v1.pos
+        else:
+            x1, y1 = cell.pos
         x0, y0 = v0.pos
-        x1, y1 = v1.pos
         x2, y2 = cell.pos
 
         if (v0, cell) in matches:
@@ -300,8 +319,9 @@ def draw_complex(chain, flow, scale):
 
         cvs.stroke(path.line(x0, y0, x1, y1))
 
-        name = "$%s$"%cell.name
-        annotate(x2, y2, 5*r, name)
+        if labels:
+            name = "$%s$"%cell.name
+            annotate(x2, y2, 5*r, name)
 
 
     # Draw Vertices
@@ -313,8 +333,9 @@ def draw_complex(chain, flow, scale):
             cvs.stroke(path.circle(x, y, 2*r), [red]+st_thick)
         cvs.fill(path.circle(x, y, r))
 
-        name = "$%s$"%cell.name
-        annotate(x, y, 5*r, name)
+        if labels:
+            name = "$%s$"%cell.name
+            annotate(x, y, 5*r, name)
 
 
 # ---------------------------------------------------------
@@ -345,8 +366,11 @@ chains.append(chain)
 chain = Assembly.build_tetrahedron(ring).get_chain()
 chains.append(chain)
 
-chain = Assembly.build_torus(2, 2, ring).get_chain()
-chains.append(chain)
+#chain = Assembly.build_torus(ring, 2, 2).get_chain()
+ambly = Assembly.build_surface(ring,
+    (0, 0), (5, 5), 
+    open_top=True, open_bot=True)
+chains.append(ambly.get_chain())
 
 scale = 2.0
 for chain in chains:
@@ -361,11 +385,29 @@ for idx, chain in enumerate(chains):
 #    if idx != 0:
 #        continue
 
-    flow = Flow(chain)
-    flow.build()
+    labels = True
+
+#    if idx == 2:
+#        labels = False
+    #flow = Flow(chain)
+    #flow.build()
+
+    if idx != 2: 
+        continue
+
+    field = Field(chain)
+    for cell in field.cells:
+        if cell.grade!=1:
+            continue
+        i,j,k = cell.key
+        if k=="v" and j in [0,4]:
+            field.clamp(cell, 1.)
+        if k=="v" and i in [0,3]:
+            field.clamp(cell, 0.)
+    flow = field.get_flow()
     
     cvs = canvas.canvas()
-    draw_complex(chain, flow, scale)
+    draw_complex(chain, flow, scale, labels)
 
     save("pic-complex-%d"%idx)
 
