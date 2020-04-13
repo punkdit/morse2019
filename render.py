@@ -368,7 +368,7 @@ chains.append(chain)
 
 #chain = Assembly.build_torus(ring, 2, 2).get_chain()
 ambly = Assembly.build_surface(ring,
-    (0, 0), (5, 5), 
+    (0, 0), (6, 5), 
     open_top=True, open_bot=True)
 chains.append(ambly.get_chain())
 
@@ -399,10 +399,10 @@ for idx, chain in enumerate(chains):
     for cell in field.cells:
         if cell.grade!=1:
             continue
-        i,j,k = cell.key
-        if k=="v" and j in [0,4]:
+        i, j, k = cell.key
+        if k=="v" and j in [0, 4]:
             field.clamp(cell, 1.)
-        if k=="v" and i in [0,3]:
+        if k=="v" and i in [0, 4]:
             field.clamp(cell, 0.)
     flow = field.get_flow()
     
