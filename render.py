@@ -55,6 +55,8 @@ st_round = [style.linecap.round]
 st_thick = [style.linewidth.thick]
 st_Thick = [style.linewidth.Thick]
 st_THick = [style.linewidth.THick]
+st_THIck = [style.linewidth.THIck]
+st_THICk = [style.linewidth.THICk]
 st_THICK = [style.linewidth.THICK]
 #print dir(style.linewidth)
 
@@ -101,9 +103,9 @@ def conv(x0, y0, x1, y1, a):
 
 def arrow(x0, y0, x1, y1, a=0.8, extra=[]):
     x2, y2 = conv(x0, y0, x1, y1, a)
-    cvs.stroke(path.line(x0, y0, x2, y2), [deco.earrow()]+st_thick+extra)
+    cvs.stroke(path.line(x0, y0, x2, y2), [deco.earrow()]+extra)
     if a < 1.0:
-        cvs.stroke(path.line(x0, y0, x1, y1), st_thick+extra)
+        cvs.stroke(path.line(x0, y0, x1, y1), extra)
 
 
 def hitlist(x0, y0, x1, y1):
@@ -180,13 +182,13 @@ def draw_poset(chain, flow, dx=1.0, dy=2.0, r=0.06):
                 continue
             x0, y0 = layout[col]
             x1, y1 = layout[row]
-            arrow(x0, y0, x1, y1, 0.8, [green])
+            arrow(x0, y0, x1, y1, 0.8, [green]+st_thick)
 
         for pair in matches:
             src, tgt = pair
             x0, y0 = layout[src]
             x1, y1 = layout[tgt]
-            arrow(x0, y0, x1, y1, 0.8, [orange])
+            arrow(x0, y0, x1, y1, 0.8, [orange]+st_thick)
 
     # draw cells last
     for (cell, (x, y)) in layout.items():
@@ -206,7 +208,17 @@ def draw_poset(chain, flow, dx=1.0, dy=2.0, r=0.06):
             cvs.text(x+3*r, y-r, name, northwest)
 
 
-def draw_complex(chain, flow, scale, labels=True):
+def rescale(chain, scale = 2.0):
+    for cell in chain.get_cells():
+        if cell.pos is None:
+            continue
+        x, y = cell.pos
+        cell.pos = scale*x, scale*y
+
+
+def draw_complex(chain, flow, scale=2.0, labels=True):
+
+    rescale(chain, scale)
 
     r = 0.07
 
@@ -216,6 +228,8 @@ def draw_complex(chain, flow, scale, labels=True):
     verts = chain.get_cells(0)
     edges = chain.get_cells(1)
     faces = chain.get_cells(2)
+
+    st_arrow = st_THICk+[orange, deco.earrow.Large]
 
     bdys = {} # map cell --> list of bdy cells
 
@@ -244,7 +258,6 @@ def draw_complex(chain, flow, scale, labels=True):
         e.pos = x2, y2
 
     # Draw Faces
-    matches = flow.get_pairs(1)
     for f in faces:
         bdy = bdys[f]
         assert bdy
@@ -266,6 +279,8 @@ def draw_complex(chain, flow, scale, labels=True):
             x0, y0 = hull[-1]
             vs.sort(key = lambda pos : abs(pos[0]-x0)+abs(pos[1]-y0))
             hull.append(vs[0])
+        f.hull = hull
+
 
         # center
         x0 = sum([pos[0] for pos in hull]) / len(hull)
@@ -274,10 +289,30 @@ def draw_complex(chain, flow, scale, labels=True):
         if f.pos == None:
             f.pos = x0, y0
 
+    # draw the infty face first, this is the back face
+    # stretched outside to infty
+    for f in faces:
         if not f.infty:
-            hull = [conv(x, y, x0, y0, 0.2) for (x,y) in hull]
-            #p = path.path(path.moveto(*hull[0]),
-            #cvs.fill(p, [grey])
+            continue
+        a = 1.1
+        hull = [(a*x,a*y) for (x,y) in f.hull]
+        R = 8*r
+        x0 = min(x for (x,y) in hull) - R
+        x1 = max(x for (x,y) in hull) + R
+        y0 = min(y for (x,y) in hull) - R
+        y1 = max(y for (x,y) in hull) + R
+        cvs.fill(path.rect(x0, y0, x1-x0, y1-y0), [grey])
+        dopath(hull, fill=[white], stroke=False)
+
+    # draw the other faces
+    matches = flow.get_pairs(1)
+    print("matches:", len(matches))
+    for f in faces:
+        bdy = bdys[f]
+
+        x0, y0 = f.pos
+        if not f.infty:
+            hull = [conv(x, y, x0, y0, 0.2) for (x,y) in f.hull]
             dopath(hull, fill=[grey], stroke=False)
 
         for e in bdy:
@@ -288,12 +323,12 @@ def draw_complex(chain, flow, scale, labels=True):
                     y0 = 2*y1
                     f.pos = x0, y0
                 try:
-                    arrow(x1, y1, x0, y0, 1.0, st_THick+[orange])
+                    arrow(x1, y1, x0, y0, 1.0, st_arrow)
                 except:
                     cvs.text(x0, y0, "???", center)
 
         if f in critical:
-            cvs.stroke(path.circle(f.pos[0], f.pos[1], r), [red]+st_thick)
+            cvs.stroke(path.circle(f.pos[0], f.pos[1], 2*r), [red]+st_thick)
 
     # Draw Edges
     matches = flow.get_pairs(0)
@@ -312,10 +347,13 @@ def draw_complex(chain, flow, scale, labels=True):
         x2, y2 = cell.pos
 
         if (v0, cell) in matches:
-            arrow(x0, y0, x2, y2, 1.0, st_THick+[orange])
+            arrow(x0, y0, x2, y2, 1.0, st_arrow)
 
         elif cell in critical:
-            cvs.stroke(path.circle(x2, y2, r), [red]+st_thick)
+            cvs.stroke(path.circle(x2, y2, 2*r), [red]+st_thick)
+
+        else:
+            print("WARNING: not matched & not critical", cell)
 
         cvs.stroke(path.line(x0, y0, x1, y1))
 
@@ -340,82 +378,95 @@ def draw_complex(chain, flow, scale, labels=True):
 
 # ---------------------------------------------------------
 
-M = parse("""
-11.....
-1.1....
-.1.11..
-..11.1.
-....1.1
-.....11
-""")
-
 ring = element.FiniteField(2)
 
-#rows = "1 2 3 4 5 6".split()
-#cols = "1 2 3 4 5 6 7".split()
-chains = []
 
-chain = Chain.fromnumpy(M, ring)
-verts = chain.cells[0]
-for i, v in enumerate(verts):
-    x = (i//2)
-    y = -(i%2)
-    v.pos = x, y
-chains.append(chain)
-
-chain = Assembly.build_tetrahedron(ring).get_chain()
-chains.append(chain)
-
-#chain = Assembly.build_torus(ring, 2, 2).get_chain()
-ambly = Assembly.build_surface(ring,
-    (0, 0), (6, 5), 
-    open_top=True, open_bot=True)
-chains.append(ambly.get_chain())
-
-scale = 2.0
-for chain in chains:
-    for cell in chain.get_cells():
-        if cell.pos is None:
-            continue
-        x, y = cell.pos
-        cell.pos = scale*x, scale*y
-
-for idx, chain in enumerate(chains):
-
-#    if idx != 0:
-#        continue
-
-    labels = True
-
-#    if idx == 2:
-#        labels = False
+if 0:
+    # ------------------------------------ 
+    
+    M = parse("""
+    11.....
+    1.1....
+    .1.11..
+    ..11.1.
+    ....1.1
+    .....11
+    """)
+    
+    chain = Chain.fromnumpy(M, ring)
+    verts = chain.cells[0]
+    for i, v in enumerate(verts):
+        x = (i//2)
+        y = -(i%2)
+        v.pos = x, y
+    
     #flow = Flow(chain)
     #flow.build()
-
-    if idx != 2: 
-        continue
-
+    
     field = Field(chain)
-    for cell in field.cells:
-        if cell.grade!=1:
-            continue
-        i, j, k = cell.key
-        if k=="v" and j in [0, 4]:
-            field.clamp(cell, 1.)
-        if k=="v" and i in [0, 4]:
-            field.clamp(cell, 0.)
+    field.clamp("v_{1}", 1.0)
+    field.clamp("v_{6}", 0.0)
     flow = field.get_flow()
     
     cvs = canvas.canvas()
-    draw_complex(chain, flow, scale, labels)
-
-    save("pic-complex-%d"%idx)
-
-    #break
+    draw_complex(chain, flow, labels=True)
+    save("pic-complex-graph")
     
     cvs = canvas.canvas()
     draw_poset(chain, flow)
-    save("pic-poset-%d"%idx)
+    save("pic-poset-graph")
+    
+    
+    # ------------------------------------ 
+    
+    chain = Assembly.build_tetrahedron(ring).get_chain()
+    
+    field = Field(chain)
+    field.clamp("v_{1}", 0.0)
+    field.clamp("f_{4}", 1.0)
+    flow = field.get_flow()
+    
+    #flow = Flow(chain)
+    #flow.build()
+    
+    cvs = canvas.canvas()
+    draw_complex(chain, flow, labels=True)
+    save("pic-complex-tetra")
+    
+    cvs = canvas.canvas()
+    draw_poset(chain, flow)
+    save("pic-poset-tetra")
+    
+    
+# ------------------------------------ 
+
+#chain = Assembly.build_torus(ring, 2, 2).get_chain() # ugh...
+
+# ------------------------------------ 
+
+ambly = Assembly.build_surface(ring,
+    (0, 0), (6, 5), 
+    open_top=True, open_bot=True)
+
+chain = ambly.get_chain()
+
+
+field = Field(chain)
+for cell in field.cells:
+    if cell.grade!=1:
+        continue
+    i, j, k = cell.key
+    if k=="v" and j in [0, 4]:
+        field.clamp(cell, 1.)
+    if k=="v" and i in [0, 4]:
+        field.clamp(cell, 0.)
+flow = field.get_flow()
+
+
+cvs = canvas.canvas()
+draw_complex(chain, flow, labels=False)
+save("pic-complex-surface")
+
 
 
 
