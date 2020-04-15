@@ -306,7 +306,7 @@ def draw_complex(chain, flow, scale=2.0, labels=True):
 
     # draw the other faces
     matches = flow.get_pairs(1)
-    print("matches:", len(matches))
+    #print("matches:", len(matches))
     for f in faces:
         bdy = bdys[f]
 
@@ -352,8 +352,8 @@ def draw_complex(chain, flow, scale=2.0, labels=True):
         elif cell in critical:
             cvs.stroke(path.circle(x2, y2, 2*r), [red]+st_thick)
 
-        else:
-            print("WARNING: not matched & not critical", cell)
+        #else:
+        #    print("WARNING: not matched & not critical", cell)
 
         cvs.stroke(path.line(x0, y0, x1, y1))
 
@@ -376,6 +376,63 @@ def draw_complex(chain, flow, scale=2.0, labels=True):
             annotate(x, y, 5*r, name)
 
 
+def draw_matrix(M, flow=None):
+
+    st_text = center
+
+    rows = M.rows
+    cols = M.cols
+
+    dx = 0.5
+    dy = 0.5
+    H = len(rows)*dy
+    W = len(cols)*dx
+
+    layout = {}
+
+    for i, col in enumerate(cols):
+        x, y = i*dx, H+dy
+        layout[col] = x, y
+        cvs.text(x, y, "$%s$"%col, st_text)
+
+    for j, row in enumerate(rows):
+        x, y = -dx, H-j*dy
+        layout[row] = x, y
+        cvs.text(x, y, "$%s$"%row, st_text)
+
+    cvs.stroke(path.line(-1.4*dx, H+0.5*dy, W-0.5*dx, H+0.5*dy))
+    cvs.stroke(path.line(-0.5*dx, 0.6*dy, -0.5*dx, H+1.4*dy))
+
+    for i, col in enumerate(cols):
+      for j, row in enumerate(rows):
+        value = M[row, col]
+        if value == 0:
+            c = '.'
+        else:
+            c = str(value)
+        x, y = i*dx, H-j*dy
+        layout[row, col] = x, y
+        cvs.text(x, y, "$%s$"%c, st_text)
+
+    if flow is None:
+        return
+
+    r = 0.2
+    critical = flow.get_critical()
+    for item in rows+cols:
+        if item in critical:
+            x, y = layout[item]
+            cvs.stroke(path.circle(x, y, r), st_thick+[red])
+
+    for key in flow.get_pairs():
+        if key not in layout:
+            continue
+        x, y = layout[key]
+        cvs.stroke(path.circle(x, y, r), st_thick+[orange])
+        
+
+
+
 # ---------------------------------------------------------
 
 ring = element.FiniteField(2)
@@ -392,6 +449,15 @@ if 0:
     ....1.1
     .....11
     """)
+    #print(M)
+    M = numpy.array([
+        [ 1, 1, 0, 0, 0, 0, 0],
+        [ 1, 0, 1, 0, 0, 0, 0],
+        [ 0, 1, 0, 1, 1, 0, 0],
+        [ 0, 0, 1, 1, 0, 1, 0],
+        [ 0, 0, 0, 0, 1, 0, 1],
+        [ 0, 0, 0, 0, 0, 1, 1] 
+    ])
     
     chain = Chain.fromnumpy(M, ring)
     verts = chain.cells[0]
@@ -400,13 +466,22 @@ if 0:
         y = -(i%2)
         v.pos = x, y
     
-    #flow = Flow(chain)
+    flow = Flow(chain)
+    flow.add_match(0, 1, 1)
+    flow.add_match(0, 3, 2)
+    flow.add_match(0, 4, 4)
+    flow.add_match(0, 5, 5)
+    flow.add_match(0, 6, 6)
     #flow.build()
     
-    field = Field(chain)
-    field.clamp("v_{1}", 1.0)
-    field.clamp("v_{6}", 0.0)
-    flow = field.get_flow()
+    #field = Field(chain)
+    #field.clamp((0, 1), 1.0)
+    #field.clamp((0, 6), 0.0)
+    #flow = field.get_flow()
+    
+    cvs = canvas.canvas()
+    draw_matrix(chain.get_bdymap(1), flow)
+    save("pic-matrix-graph")
     
     cvs = canvas.canvas()
     draw_complex(chain, flow, labels=True)
@@ -422,12 +497,16 @@ if 0:
     chain = Assembly.build_tetrahedron(ring).get_chain()
     
     field = Field(chain)
-    field.clamp("v_{1}", 0.0)
-    field.clamp("f_{4}", 1.0)
+    field.clamp((0, 1), 0.0)
+    field.clamp((2, 4), 1.0)
     flow = field.get_flow()
     
     #flow = Flow(chain)
     #flow.build()
+
+    cvs = canvas.canvas()
+    draw_matrix(chain.get_bdymap(2), flow)
+    save("pic-matrix-tetra")
     
     cvs = canvas.canvas()
     draw_complex(chain, flow, labels=True)
@@ -444,27 +523,48 @@ if 0:
 
 # ------------------------------------ 
 
-ambly = Assembly.build_surface(ring,
-    (0, 0), (6, 5), 
+m, n = 7, 6
+
+ambly = Assembly.build_surface(
+    ring, (0, 0), (m, n), 
     open_top=True, open_bot=True)
 
 chain = ambly.get_chain()
 
 
-field = Field(chain)
-for cell in field.cells:
-    if cell.grade!=1:
-        continue
-    i, j, k = cell.key
-    if k=="v" and j in [0, 4]:
-        field.clamp(cell, 1.)
-    if k=="v" and i in [0, 4]:
-        field.clamp(cell, 0.)
-flow = field.get_flow()
+if 0:
+    field = Field(chain)
+    for cell in field.cells:
+        if cell.grade!=1:
+            continue
+        i, j, k = cell.key
+        if k=="v" and j in [0, n-1]:
+            field.clamp(cell, 1.)
+        if k=="v" and i in [0, m-2]:
+            field.clamp(cell, 0.)
+    flow = field.get_flow()
+
+
+flow = Flow(chain)
+add_match = flow.add_match
+
+for j in range(n):
+    add_match(0, (1,j), (0,j,'v')) # top
+    add_match(0, (m-2,j), (m-2,j,'v')) # bot
+    if j < n-1:
+        add_match(1, (1,j,"h"), (0,j)) # top
+        add_match(1, (m-2,j,"h"), (m-2,j)) # bot
+
+for i in range(1, m-2):
+    add_match(1, (i, 0, 'v'), (i, 0)) # left
+    add_match(1, (i, n-1, 'v'), (i, n-2)) # right
+    if 1<i:
+        add_match(0, (i,0), (i,0,'h'))
+        add_match(0, (i,n-1), (i,n-2,'h'))
 
 
 cvs = canvas.canvas()
-draw_complex(chain, flow, labels=False)
+draw_complex(chain, flow, labels=True)
 save("pic-complex-surface")
 
 
