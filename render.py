@@ -524,12 +524,15 @@ if 0:
 # ------------------------------------ 
 
 m, n = 7, 6
+#m, n = 3, 2
 
 ambly = Assembly.build_surface(
     ring, (0, 0), (m, n), 
     open_top=True, open_bot=True)
 
 chain = ambly.get_chain()
+for grade in [1, 2]:
+    print(chain.get_bdymap(grade))
 
 
 if 0:
@@ -542,25 +545,30 @@ if 0:
             field.clamp(cell, 1.)
         if k=="v" and i in [0, m-2]:
             field.clamp(cell, 0.)
+
+    #field.show() # TODO
     flow = field.get_flow()
+
+
 
 
 flow = Flow(chain)
 add_match = flow.add_match
 
-for j in range(n):
-    add_match(0, (1,j), (0,j,'v')) # top
-    add_match(0, (m-2,j), (m-2,j,'v')) # bot
-    if j < n-1:
-        add_match(1, (1,j,"h"), (0,j)) # top
-        add_match(1, (m-2,j,"h"), (m-2,j)) # bot
-
-for i in range(1, m-2):
-    add_match(1, (i, 0, 'v'), (i, 0)) # left
-    add_match(1, (i, n-1, 'v'), (i, n-2)) # right
-    if 1<i:
-        add_match(0, (i,0), (i,0,'h'))
-        add_match(0, (i,n-1), (i,n-2,'h'))
+if 0:
+    for j in range(n):
+        add_match(0, (1,j), (0,j,'v')) # top
+        add_match(0, (m-2,j), (m-2,j,'v')) # bot
+        if j < n-1:
+            add_match(1, (1,j,"h"), (0,j)) # top
+            add_match(1, (m-2,j,"h"), (m-2,j)) # bot
+    
+    for i in range(1, m-2):
+        add_match(1, (i, 0, 'v'), (i, 0)) # left
+        add_match(1, (i, n-1, 'v'), (i, n-2)) # right
+        if 1<i:
+            add_match(0, (i,0), (i,0,'h'))
+            add_match(0, (i,n-1), (i,n-2,'h'))
 
 
 cvs = canvas.canvas()
