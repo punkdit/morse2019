@@ -523,7 +523,8 @@ if 0:
 
 # ------------------------------------ 
 
-m, n = 7, 6
+#m, n = 7, 6
+m, n = 6, 5
 #m, n = 3, 2
 
 ambly = Assembly.build_surface(
@@ -531,11 +532,12 @@ ambly = Assembly.build_surface(
     open_top=True, open_bot=True)
 
 chain = ambly.get_chain()
-for grade in [1, 2]:
-    print(chain.get_bdymap(grade))
+
+#for grade in [1, 2]:
+#    print(chain.get_bdymap(grade))
 
 
-if 0:
+if 1:
     field = Field(chain)
     for cell in field.cells:
         if cell.grade!=1:
@@ -550,12 +552,10 @@ if 0:
     flow = field.get_flow()
 
 
+else:
+    flow = Flow(chain)
+    add_match = flow.add_match
 
-
-flow = Flow(chain)
-add_match = flow.add_match
-
-if 0:
     for j in range(n):
         add_match(0, (1,j), (0,j,'v')) # top
         add_match(0, (m-2,j), (m-2,j,'v')) # bot
@@ -572,7 +572,7 @@ if 0:
 
 
 cvs = canvas.canvas()
-draw_complex(chain, flow, labels=True)
+draw_complex(chain, flow, labels=False)
 save("pic-complex-surface")
 
 

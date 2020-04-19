@@ -234,13 +234,24 @@ This means we have
 \doproof See \cite{Jollenbeck2005} Lemma 2.3.
 \tombstone
 
+We denote the chain complex $...\to 0\to K \xrightarrow{I} K \to 0\to ...$
+with $K$ at dimensions $d$ and $d-1$, as {\tt Atom}$(d)$.
+
 \dotheorem{\numitem{Lem}}
+$$
+C_\star \cong C_\star^\MM \bigoplus_{(a,b)\in\MM} {\tt Atom}(\text{dim}(b)) 
+$$
+\doproof
+See \cite{Kozlov2005} Theorem 2.1.
+\tombstone
+
+\docorollary{\numitem{Lem}}
 The homologies for $C$ and $C^\MM$ are isomorphic:
 $$
     H_\star(C) \cong H_\star(C^\MM).
 $$
-\doproof
-Immediate consequence of the above lemmas.
+%\doproof
+%Immediate consequence of the above lemmas.
 \tombstone
 
 
