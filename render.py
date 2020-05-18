@@ -527,10 +527,7 @@ if 0:
 m, n = 6, 5
 #m, n = 3, 2
 
-ambly = Assembly.build_surface(
-    ring, (0, 0), (m, n), 
-    open_top=True, open_bot=True)
-
+ambly = Assembly.build_surface(ring, (0, 0), (m, n), open_top=True, open_bot=True)
 chain = ambly.get_chain()
 
 #for grade in [1, 2]:
@@ -573,7 +570,7 @@ else:
 
 cvs = canvas.canvas()
 draw_complex(chain, flow, labels=False)
-save("pic-complex-surface")
+save("pic-complex-surface-2")
 
 
 
